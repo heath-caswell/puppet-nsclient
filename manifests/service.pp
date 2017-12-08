@@ -12,16 +12,22 @@ class nsclient::service(
   $service_enable  = $nsclient::service_enable,
   $allowed_hosts   = $nsclient::allowed_hosts,
   $config_template = $nsclient::config_template,
-  $install_path    = $nsclient::install_path
+  $install_path    = $nsclient::install_path,
+  $use_inline_template = $nsclient::use_inline_template
 ) {
 
   case downcase($::osfamily) {
     'windows': {
+	  if $use_inline_template {
+	    $file_content = inline_template($config_template)
+	  } else {
+	    $file_content = template($config_template)
+	  }
       file { "${install_path}\\nsclient.ini":
         ensure  => file,
         owner   => 'SYSTEM',
         mode    => '0664',
-        content => template($config_template),
+        content => $file_content,
         notify  => Service['nscp'],
       }
 
