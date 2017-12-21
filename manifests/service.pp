@@ -28,6 +28,14 @@ class nsclient::service(
         owner   => 'SYSTEM',
         mode    => '0664',
         content => $file_content,
+        #notify  => Service['nscp'],
+      }
+	  #Fuck you puppet, the file isn't changing.
+      file { "${install_path}\\nsclient.change_check":
+        ensure  => file,
+        owner   => 'SYSTEM',
+        mode    => '0664',
+        content => $file_content,
         notify  => Service['nscp'],
       }
 
